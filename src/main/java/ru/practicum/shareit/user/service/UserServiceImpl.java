@@ -2,9 +2,10 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
@@ -14,70 +15,78 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public UserDto create(UserDto userDto) {
-        validateUserForCreate(userDto);
-        checkEmailIsFree(userDto.getEmail(), null);
-        User user = userRepository.save(UserMapper.toModel(userDto));
-        return UserMapper.toDto(user);
+        validateForCreate(userDto);
+        if (userRepository.existsByEmailIgnoreCase(userDto.getEmail())) {
+            throw new ConflictException("Email already exists: " + userDto.getEmail());
+        }
+        return UserMapper.toDto(userRepository.save(UserMapper.toModel(userDto)));
     }
 
     @Override
+    @Transactional
     public UserDto update(Long userId, UserDto userDto) {
         if (userDto == null) {
-            throw new ValidationException("User body is empty");
+            throw new BadRequestException("User body is empty");
         }
-
-        User user = getUserOrThrow(userId);
-
+        User user = getEntity(userId);
         if (userDto.getName() != null) {
             validateName(userDto.getName());
             user.setName(userDto.getName());
         }
         if (userDto.getEmail() != null) {
             validateEmail(userDto.getEmail());
-            checkEmailIsFree(userDto.getEmail(), userId);
+            userRepository.findByEmailIgnoreCase(userDto.getEmail())
+                    .filter(existing -> !existing.getId().equals(userId))
+                    .ifPresent(existing -> {
+                        throw new ConflictException("Email already exists: " + userDto.getEmail());
+                    });
             user.setEmail(userDto.getEmail());
         }
-
-        return UserMapper.toDto(userRepository.update(user));
+        return UserMapper.toDto(userRepository.save(user));
     }
 
     @Override
     public UserDto getById(Long userId) {
-        return UserMapper.toDto(getUserOrThrow(userId));
+        return UserMapper.toDto(getEntity(userId));
     }
 
     @Override
     public List<UserDto> getAll() {
-        return userRepository.findAll().stream()
+        return userRepository.findAll()
+                .stream()
                 .map(UserMapper::toDto)
                 .toList();
     }
 
     @Override
+    @Transactional
     public void delete(Long userId) {
-        userRepository.deleteById(userId);
+        if (userRepository.existsById(userId)) {
+            userRepository.deleteById(userId);
+        }
     }
 
     @Override
     public void checkUserExists(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("User with id=" + userId + " was not found");
-        }
+        getEntity(userId);
     }
 
-    private User getUserOrThrow(Long userId) {
+    @Override
+    public User getEntity(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id=" + userId + " was not found"));
+                .orElseThrow(() -> new NotFoundException("User not found: " + userId));
     }
 
-    private void validateUserForCreate(UserDto userDto) {
+    private void validateForCreate(UserDto userDto) {
         if (userDto == null) {
-            throw new ValidationException("User body is empty");
+            throw new BadRequestException("User body is empty");
         }
         validateName(userDto.getName());
         validateEmail(userDto.getEmail());
@@ -85,24 +94,16 @@ public class UserServiceImpl implements UserService {
 
     private void validateName(String name) {
         if (name == null || name.isBlank()) {
-            throw new ValidationException("User name must not be blank");
+            throw new BadRequestException("User name must not be blank");
         }
     }
 
     private void validateEmail(String email) {
         if (email == null || email.isBlank()) {
-            throw new ValidationException("User email must not be blank");
+            throw new BadRequestException("User email must not be blank");
         }
         if (!email.contains("@")) {
-            throw new ValidationException("User email must contain @");
+            throw new BadRequestException("User email must contain @");
         }
-    }
-
-    private void checkEmailIsFree(String email, Long currentUserId) {
-        userRepository.findByEmail(email)
-                .filter(user -> !user.getId().equals(currentUserId))
-                .ifPresent(user -> {
-                    throw new ConflictException("User with email=" + email + " already exists");
-                });
     }
 }
