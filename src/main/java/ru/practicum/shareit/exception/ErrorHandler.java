@@ -31,6 +31,12 @@ public class ErrorHandler {
         return error(exception.getMessage());
     }
 
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public Map<String, String> handleForbidden(ForbiddenException exception) {
+        return error(exception.getMessage());
+    }
+
     @ExceptionHandler({
             BadRequestException.class,
             ValidationException.class,

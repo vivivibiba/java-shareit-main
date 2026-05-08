@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -58,7 +59,7 @@ public class BookingServiceImpl implements BookingService {
         }
         Booking booking = getEntity(bookingId);
         if (!booking.getItem().getOwner().getId().equals(userId)) {
-            throw new NotFoundException("Only owner can approve booking");
+            throw new ForbiddenException("Only owner can approve booking");
         }
         if (booking.getStatus() != BookingStatus.WAITING) {
             throw new BadRequestException("Booking is already processed");
