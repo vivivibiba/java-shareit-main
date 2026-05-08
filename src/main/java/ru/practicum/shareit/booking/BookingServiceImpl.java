@@ -75,7 +75,7 @@ public class BookingServiceImpl implements BookingService {
         boolean booker = booking.getBooker().getId().equals(userId);
         boolean owner = booking.getItem().getOwner().getId().equals(userId);
         if (!booker && !owner) {
-            throw new NotFoundException("Booking is not available for user: " + userId);
+            throw new ForbiddenException("Booking is not available for user: " + userId);
         }
         return BookingMapper.toDto(booking);
     }
