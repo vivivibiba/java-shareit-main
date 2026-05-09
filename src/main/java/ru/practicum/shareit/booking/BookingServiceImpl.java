@@ -53,7 +53,6 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDto approve(Long userId, Long bookingId, Boolean approved) {
-        userService.getEntity(userId);
         if (approved == null) {
             throw new BadRequestException("Approved parameter is required");
         }
