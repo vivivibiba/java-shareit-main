@@ -1,5 +1,7 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.repository;
 
+import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.booking.model.Booking;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 

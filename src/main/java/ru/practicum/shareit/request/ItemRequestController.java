@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request;
 
+import ru.practicum.shareit.request.service.ItemRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

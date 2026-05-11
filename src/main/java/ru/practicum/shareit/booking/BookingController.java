@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking;
 
+import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.booking.model.BookingState;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

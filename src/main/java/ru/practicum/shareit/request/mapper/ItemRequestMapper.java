@@ -1,5 +1,6 @@
-package ru.practicum.shareit.request;
+package ru.practicum.shareit.request.mapper;
 
+import ru.practicum.shareit.request.model.ItemRequest;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.dto.ItemDto;

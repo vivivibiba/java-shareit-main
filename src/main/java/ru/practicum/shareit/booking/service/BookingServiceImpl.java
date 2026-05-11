@@ -1,5 +1,10 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.service;
 
+import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.booking.model.BookingState;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
