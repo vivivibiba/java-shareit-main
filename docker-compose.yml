@@ -16,7 +16,12 @@ services:
     container_name: shareit-server
     ports:
       - "9090:9090"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     environment:
+      TZ: Asia/Yekaterinburg
+      JAVA_TOOL_OPTIONS: "-Duser.timezone=Asia/Yekaterinburg"
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/shareit
       SPRING_DATASOURCE_USERNAME: shareit
       SPRING_DATASOURCE_PASSWORD: shareit
