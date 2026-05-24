@@ -1,6 +1,6 @@
 services:
   gateway:
-    build: ./shareit-gateway
+    build: ./gateway
     image: shareit-gateway
     container_name: shareit-gateway
     ports:
@@ -11,14 +11,11 @@ services:
       - server
 
   server:
-    build: ./shareit-server
+    build: ./server
     image: shareit-server
     container_name: shareit-server
     ports:
       - "9090:9090"
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
     environment:
       TZ: Asia/Yekaterinburg
       JAVA_TOOL_OPTIONS: "-Duser.timezone=Asia/Yekaterinburg"
