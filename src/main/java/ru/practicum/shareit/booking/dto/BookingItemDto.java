@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.dto;
+package ru.practicum.shareit.booking.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class BookingItemDto {
     private Long id;
     private String name;
-    private String email;
 }
