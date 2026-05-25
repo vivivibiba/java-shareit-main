@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,5 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class CommentCreateDto {
+    @NotBlank
     private String text;
 }
